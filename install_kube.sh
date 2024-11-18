@@ -11,6 +11,7 @@ sudo mv kubectl /usr/local/bin/
 echo "Verifying kubectl installation..."
 kubectl version --client
 
+
 # step2
 SERVICE_CIDR="10.96.0.0/24"
 API_SERVICE=$(echo $SERVICE_CIDR | awk 'BEGIN {FS="."} ; { printf("%s.%s.%s.1", $1, $2, $3) }')
@@ -109,6 +110,7 @@ openssl x509 -req -in service-account.csr -CA ca.crt -CAkey ca.key -CAcreateseri
 
 echo "Certificate generation completed successfully!"
 
+
 #step 3
 
 echo "Generating kubeconfig files..."
@@ -193,8 +195,8 @@ kubectl config set-context default \
 kubectl config use-context default --kubeconfig=admin.kubeconfig
 
 echo "Admin kubeconfig generated."
-
 echo "All kubeconfig files have been created successfully."
+
 
 #step 4
 echo "Generating Data Encryption Config and Key..."
@@ -216,6 +218,7 @@ EOF
 echo "Data Encryption Config and Key generated."
 sudo mkdir -p /var/lib/kubernetes/
 sudo mv encryption-config.yaml /var/lib/kubernetes
+
 
 #step 5
 echo "Downloading and Installing etcd binaries..."
@@ -274,6 +277,7 @@ sudo systemctl enable etcd
 sudo systemctl start etcd
 
 echo "etcd server has been started successfully."
+
 
 #step 6
 echo "Downloading Kubernetes control plane binaries..."
@@ -395,6 +399,7 @@ sudo systemctl daemon-reload
 sudo systemctl enable kube-apiserver kube-controller-manager kube-scheduler
 sudo systemctl start kube-apiserver kube-controller-manager kube-scheduler
 
+
 #step 7
 echo "Installing containerd and configuring system modules..."
 sudo apt-get update
@@ -431,7 +436,8 @@ sudo systemctl restart containerd
 
 echo "Container runtime containerd has been installed and configured successfully."
 
-#step 6
+
+#step 8
 CLUSTER_DNS=$(echo $SERVICE_CIDR | awk 'BEGIN {FS="."} ; { printf("%s.%s.%s.10", $1, $2, $3) }')
 
 echo "Provisioning Kubelet Client Certificates..."
@@ -573,6 +579,7 @@ sudo systemctl start kubelet kube-proxy
 
 echo "Kubernetes worker node setup completed successfully."
 
+
 #step 9
 echo "Configuring kubectl for remote access..."
 
@@ -594,12 +601,12 @@ kubectl config use-context kubernetes-the-hard-way
 
 echo "kubectl is configured for remote access as admin."
 
+
 #step 10
 echo "Configuring CNI plugin system and installing for pod networking..."
-
 kubectl apply -f https://raw.githubusercontent.com/projectcalico/calico/v3.25.0/manifests/calico.yaml
-
 echo "Pod networking configuration completed."
+
 
 #step 11
 echo "Configuring RBAC for Kubelet Authorization..."
@@ -643,6 +650,7 @@ subjects:
 EOF
 
 echo "RBAC configuration for Kubelet authorization completed."
+
 
 #step 12
 echo "Deploying CoreDNS for service discovery..."
